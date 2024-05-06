@@ -7,6 +7,8 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -17,8 +19,8 @@ class ProjectController extends Controller
     public function index()
     {
         $query = Project::query();
-        $sortField = request("sort_field", 'created_at');
-        $sortDirection = request("sort_dir", "desc");
+        $sortField = request("sort_field", 'id');
+        $sortDirection = request("sort_dir", "asc");
         if (request('name')) {
             $query->where('name', 'like', "%" . request('name') . '%');
         }
@@ -27,7 +29,9 @@ class ProjectController extends Controller
             $query->where('status', request('status'));
         }
 
-        $projects = $query->orderBy($sortField, $sortDirection)->paginate(15);
+        $projects = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
+
+        // dd($projects);
 
 
 
@@ -39,7 +43,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Project/CreateProjects');
     }
 
     /**
@@ -48,6 +52,15 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         //
+        $data = $request->validated();
+        $image = $data['image'] ?? null;
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+        if ($image) {
+            $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
+        }
+        Project::create($data);
+        return to_route('projects.index');
     }
 
     /**
@@ -57,8 +70,8 @@ class ProjectController extends Controller
     {
 
         $query = $project->tasks();
-        $sortField = request("sort_field", 'created_at');
-        $sortDirection = request("sort_direction", "desc");
+        $sortField = request("sort_field", 'id');
+        $sortDirection = request("sort_direction", "asc");
 
         if (request("name")) {
             $query->where("name", "like", "%" . request("name") . "%");
@@ -69,7 +82,7 @@ class ProjectController extends Controller
 
         $tasks = $query->orderBy($sortField, $sortDirection)
             ->paginate(10)
-            ->onEachSide(1);
+            ->withQueryString();
 
         // $nt = new TaskResource($tasks);
 

@@ -8,10 +8,11 @@ import {
 import TextInput from "@/Components/TextInput";
 import SelectInput from "@/Components/SelectInput";
 import TableHead from "@/Components/TableHead";
+import { PlusIcon } from "@heroicons/react/16/solid";
 
 export default function Index({ auth, projects, queryParams = null }) {
     queryParams = queryParams || {};
-    console.log(queryParams);
+    // console.log(queryParams);
     const searchFieldChanged = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -29,7 +30,7 @@ export default function Index({ auth, projects, queryParams = null }) {
     };
 
     const SortChange = (name) => {
-        console.log(queryParams);
+        // console.log(queryParams);
         if (name === queryParams.sort_field) {
             if (queryParams.sort_dir === "asc") {
                 queryParams.sort_dir = "desc";
@@ -47,13 +48,25 @@ export default function Index({ auth, projects, queryParams = null }) {
         router.get(route("projects.destroy", id));
     };
 
+    const create = () => {
+        router.get(route("projects.create"));
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Projects
-                </h2>
+                <div className="flex justify-between">
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        Projects
+                    </h2>
+                    <div
+                        onClick={create}
+                        className="bg-blue-500 hover:bg-blue-600 w-8 text-center p-2 rounded-lg cursor-pointer"
+                    >
+                        <PlusIcon className="text-white" />
+                    </div>
+                </div>
             }
         >
             <Head title="Projects" />
