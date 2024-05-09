@@ -10,7 +10,7 @@ import SelectInput from "@/Components/SelectInput";
 import TableHead from "@/Components/TableHead";
 import { PlusIcon } from "@heroicons/react/16/solid";
 
-export default function Index({ auth, projects, queryParams = null }) {
+export default function Index({ auth, projects, queryParams = null, success }) {
     queryParams = queryParams || {};
     // console.log(queryParams);
     const searchFieldChanged = (name, value) => {
@@ -44,10 +44,17 @@ export default function Index({ auth, projects, queryParams = null }) {
         router.get(route("projects.index", queryParams));
     };
 
-    const Destroy = (id) => {
-        router.get(route("projects.destroy", id));
+    const Destroy = (project) => {
+        // console.log(project);
+        if (!window.confirm("Are you sure, you want to delete this")) {
+            return;
+        }
+        router.delete(route("projects.destroy", project));
     };
 
+    const Edit = (project) => {
+        router.get(route("projects.edit", project));
+    };
     const create = () => {
         router.get(route("projects.create"));
     };
@@ -75,7 +82,12 @@ export default function Index({ auth, projects, queryParams = null }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <div className="overflow-auto">
+                            {success && (
+                                <div className="bg-emerald-500 py-2 px-4 text-white w-full rounded-lg mt-3 mx-2">
+                                    {success}
+                                </div>
+                            )}
+                            <div className="overflow-x-scroll w-full">
                                 <table className="w-full my-0 align-middle text-dark border-neutral-200 ">
                                     <thead className="align-bottom">
                                         <tr className="font-semibold text-[0.95rem] text-gray-400 ">
@@ -126,7 +138,7 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                         : ""
                                                 }
                                                 name="status"
-                                                classStyle="px-3 py-2 text-start"
+                                                classStyle="px-3 py-2 text-start !w-[132px]"
                                             >
                                                 Status
                                             </TableHead>
@@ -143,7 +155,7 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                         : ""
                                                 }
                                                 name="due_date"
-                                                classStyle="px-3 py-2 text-start"
+                                                classStyle="px-3 py-2 text-start !w-[119px]"
                                             >
                                                 Due Date
                                             </TableHead>
@@ -160,7 +172,7 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                         : ""
                                                 }
                                                 name="createdBy"
-                                                classStyle="px-3 py-2 text-start"
+                                                classStyle="px-3 py-2 text-start !w-[132px]"
                                             >
                                                 Created By
                                             </TableHead>
@@ -177,11 +189,11 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                         : ""
                                                 }
                                                 name="created_at"
-                                                classStyle="px-3 py-2 text-start"
+                                                classStyle="px-3 py-2 text-start !w-[129px]"
                                             >
                                                 Created At
                                             </TableHead>
-                                            <th className="px-3 py-2 text-start">
+                                            <th className="px-3 py-2 text-start !w-[119px]">
                                                 Options
                                             </th>
                                         </tr>
@@ -211,7 +223,7 @@ export default function Index({ auth, projects, queryParams = null }) {
                                             </th>
                                             <th className="px-3 py-2 text-start">
                                                 <SelectInput
-                                                    className="w-full"
+                                                    className="w-11/12"
                                                     defaultValue={
                                                         queryParams
                                                             ? queryParams.status
@@ -289,36 +301,26 @@ export default function Index({ auth, projects, queryParams = null }) {
                                                 <td className="px-3 py-2">
                                                     {project.created_at}
                                                 </td>
-                                                <td className="px-3 py-2">
-                                                    <Link
-                                                        className="px-2"
-                                                        href={route(
-                                                            "projects.edit",
-                                                            project.id
-                                                        )}
-                                                    >
-                                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded-full">
-                                                            <i className="fa-regular fa-pen-to-square text-white"></i>
-                                                        </button>
-                                                    </Link>
-                                                    <Link
-                                                        className="px-2"
-                                                        href={route(
-                                                            "projects.destroy",
-                                                            project.id
-                                                        )}
-                                                    >
+                                                <td className="px-3 py-2 ">
+                                                    <div className="flex justify-around">
                                                         <button
                                                             onClick={(e) =>
-                                                                Destroy(
-                                                                    project.id
-                                                                )
+                                                                Edit(project)
+                                                            }
+                                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded-full"
+                                                        >
+                                                            <i className="fa-regular fa-pen-to-square text-white"></i>
+                                                        </button>
+
+                                                        <button
+                                                            onClick={(e) =>
+                                                                Destroy(project)
                                                             }
                                                             className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full"
                                                         >
                                                             <i className="fa-solid fa-trash text-white"></i>
                                                         </button>
-                                                    </Link>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}

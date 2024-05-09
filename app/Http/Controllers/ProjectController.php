@@ -7,8 +7,11 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
+use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -31,11 +34,10 @@ class ProjectController extends Controller
 
         $projects = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
 
-        // dd($projects);
 
 
 
-        return inertia('Project/Index', ['projects' => ProjectResource::collection($projects), 'queryParams' => request()->query() ?: null]);
+        return inertia('Project/Index', ['projects' => ProjectResource::collection($projects), 'queryParams' => request()->query() ?: null, 'success' => session('success')]);
     }
 
     /**
@@ -43,7 +45,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return inertia('Project/CreateProjects');
+        return inertia('Project/Form');
     }
 
     /**
@@ -52,6 +54,7 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         //
+        Log::debug('niko: debe crear');
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['created_by'] = Auth::id();
@@ -84,10 +87,6 @@ class ProjectController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // $nt = new TaskResource($tasks);
-
-        // dd($nt);
-        // dd($project->name);
         return inertia('Project/Show', [
             'project' => new ProjectResource($project),
             'tasks' => TaskResource::collection($tasks),
@@ -101,7 +100,9 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return inertia('Project/Form', [
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**
@@ -109,7 +110,19 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        Log::debug("niko: deberia actualizar");
+        $data = $request->validated();
+        $image = $data['image'] ?? null;
+        $data['updated_by'] = Auth::id();
+        if ($image) {
+            if ($project->img_path) {
+                Storage::disk('public')->deleteDirectory(dirname($project->img_path));
+            }
+            $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
+        }
+        $project->update($data);
+        return to_route('projects.index')
+            ->with('success', "Project \"$project->name\" was updated");
     }
 
     /**
@@ -117,6 +130,18 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+
+        $tasks = $project->tasks()->get();
+        foreach ($tasks as $task) {
+            $task->delete();
+        }
+
+        $name = $project->name;
+        if ($project->img_path) {
+            Storage::disk('public')->deleteDirectory(dirname($project->img_path));
+        }
+        $project->delete();
+
+        return to_route('projects.index')->with('success', "Project \"$name\" was deleted.");
     }
 }
