@@ -15,10 +15,12 @@ export default function TaskTable({
     queryParams = null,
     project_id = null,
     uri = null,
+    destroy,
 }) {
     queryParams = queryParams || {};
 
     // console.log(queryParams);
+
     const searchFieldChanged = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -54,10 +56,6 @@ export default function TaskTable({
             )
         );
     };
-    const Destroy = (id) => {
-        router.get(route("tasks.destroy", id));
-    };
-    // console.log(tasks);
     return (
         <>
             <div className="overflow-auto">
@@ -137,7 +135,7 @@ export default function TaskTable({
                                 sort_field={
                                     queryParams ? queryParams.sort_field : ""
                                 }
-                                name="assigned_user_id"
+                                name="assigned_user"
                                 classStyle="px-3 py-2 text-start"
                             >
                                 Assigned to
@@ -251,17 +249,13 @@ export default function TaskTable({
                                             <i className="fa-regular fa-pen-to-square text-white"></i>
                                         </button>
                                     </Link>
-                                    <Link
-                                        className="px-2"
-                                        href={route("tasks.destroy", task.id)}
+
+                                    <button
+                                        onClick={(e) => destroy(task)}
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full px-2"
                                     >
-                                        <button
-                                            onClick={(e) => Destroy(task.id)}
-                                            className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full"
-                                        >
-                                            <i className="fa-solid fa-trash text-white"></i>
-                                        </button>
-                                    </Link>
+                                        <i className="fa-solid fa-trash text-white"></i>
+                                    </button>
                                 </td>
                             </tr>
                         ))}

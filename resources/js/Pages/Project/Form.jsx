@@ -22,7 +22,7 @@ export default function Form({ auth, project = null }) {
         if (project) {
             // alert("aaah");
             // console.log(data);
-            post(route("projects.upd", project));
+            post(route("projects.update", project));
             return;
         }
         // alert(data);

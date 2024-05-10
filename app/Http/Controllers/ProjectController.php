@@ -22,8 +22,8 @@ class ProjectController extends Controller
     public function index()
     {
         $query = Project::query();
-        $sortField = request("sort_field", 'id');
-        $sortDirection = request("sort_dir", "asc");
+        $sortField = request("sort_field", 'updated_at');
+        $sortDirection = request("sort_dir", "desc");
         if (request('name')) {
             $query->where('name', 'like', "%" . request('name') . '%');
         }
@@ -37,7 +37,11 @@ class ProjectController extends Controller
 
 
 
-        return inertia('Project/Index', ['projects' => ProjectResource::collection($projects), 'queryParams' => request()->query() ?: null, 'success' => session('success')]);
+        return inertia('Project/Index', [
+            'projects' => ProjectResource::collection($projects),
+            'queryParams' => request()->query() ?: null,
+            'success' => session('success')
+        ]);
     }
 
     /**
@@ -91,7 +95,7 @@ class ProjectController extends Controller
             'project' => new ProjectResource($project),
             'tasks' => TaskResource::collection($tasks),
             'queryParams' => request()->query() ?: null,
-
+            'success' => session('success')
         ]);
     }
 

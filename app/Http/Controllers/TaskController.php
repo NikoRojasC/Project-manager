@@ -6,6 +6,8 @@ use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -68,6 +70,16 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+
+
+        // Log::debug("niko: " . $task);
+        $name = $task->name;
+        if ($task->img_path) {
+            Storage::disk('public')->deleteDirectory(dirname($task->img_path));
+        }
+        $task->delete();
+
+        return to_route('projects.show', $task->project_id)
+            ->with('success', "Task \"$name\" was deleted.");
     }
 }

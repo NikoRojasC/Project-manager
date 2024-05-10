@@ -2,17 +2,64 @@ import TextProject from "@/Components/TextProject";
 import TaskTable from "@/Components/TaskTable";
 import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/Constants";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
+import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
+import { useEffect, useState } from "react";
 
-export default function Show({ auth, project, tasks, queryParams }) {
+export default function Show({
+    auth,
+    project,
+    tasks,
+    queryParams = null,
+    success,
+}) {
+    const [show, setShow] = useState(true);
     // console.log(tasks);
+    queryParams = queryParams || {};
+
+    useEffect(() => {
+        setShow(true);
+
+        if (success) {
+            setTimeout(() => {
+                setShow(false);
+            }, 3000);
+        }
+    }, [success]);
+
+    const destroy = (task = null) => {
+        setShow(true);
+        if (!window.confirm("Are you sure, you want to delete this")) return;
+
+        if (task) {
+            // console.log(task);
+            router.delete(route("tasks.destroy", task));
+            return;
+        }
+
+        router.delete(route("projects.destroy", project));
+    };
     return (
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Project "{project.name}"
-                </h2>
+                <div className="flex justify-between">
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        Project "{project.name}"
+                    </h2>
+                    <div className="flex  justify-between w-20">
+                        <PencilSquareIcon
+                            onClick={(e) =>
+                                router.get(route("projects.edit", project.id))
+                            }
+                            className="text-white bg-blue-500 px-2 py-1 w-9 rounded-lg cursor-pointer hover:bg-blue-600"
+                        />
+                        <TrashIcon
+                            onClick={(e) => destroy()}
+                            className="text-white bg-red-600 px-2 py-1 w-9 rounded-lg cursor-pointer hover:bg-red-700"
+                        />
+                    </div>
+                </div>
             }
         >
             <Head title={"Projects " + project.name} />
@@ -77,11 +124,17 @@ export default function Show({ auth, project, tasks, queryParams }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
+                            {success && show && (
+                                <div className="bg-emerald-500 py-2 px-4 text-white w-full rounded-lg mt-3 mx-2">
+                                    {success}
+                                </div>
+                            )}
                             <TaskTable
                                 tasks={tasks}
                                 queryParams={queryParams}
                                 uri="projects.show"
                                 project_id={project.id}
+                                destroy={destroy}
                             ></TaskTable>
                         </div>
                     </div>
