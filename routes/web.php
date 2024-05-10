@@ -17,7 +17,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('/projects', ProjectController::class);
-    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.upd');
     Route::resource('/users', UserController::class);
     Route::resource('/tasks', TaskController::class);
 });
