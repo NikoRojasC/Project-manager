@@ -4,8 +4,6 @@ import { Head, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function Form({ auth, task = null, project }) {
-    console.log(project);
-    // console.log(task.img_path);
     const [selectedImage, setSelectedImage] = useState(null);
     const { data, setData, post, errors } = useForm({
         assignTo: task ? task.assignedUser.name : "",
@@ -18,8 +16,6 @@ export default function Form({ auth, task = null, project }) {
         project_id: task ? task.project_id : project.id,
         _method: task ? "PUT" : "",
     });
-
-    console.log(data.project_id);
 
     const onSubmit = (e) => {
         e.preventDefault();

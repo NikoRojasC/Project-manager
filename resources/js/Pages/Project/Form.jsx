@@ -15,7 +15,6 @@ export default function Form({ auth, project = null }) {
         due_date: project ? project.due_date : "",
         _method: project ? "PUT" : "",
     });
-    console.log(project.img_path);
 
     const onSubmit = (e) => {
         e.preventDefault();

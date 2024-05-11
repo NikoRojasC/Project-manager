@@ -26,7 +26,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
         }
     }, [success]);
 
-    // console.log(queryParams);
     const searchFieldChanged = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -44,7 +43,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
     };
 
     const SortChange = (name) => {
-        // console.log(queryParams);
         if (name === queryParams.sort_field) {
             if (queryParams.sort_dir === "asc") {
                 queryParams.sort_dir = "desc";
@@ -59,8 +57,6 @@ export default function Index({ auth, projects, queryParams = null, success }) {
     };
 
     const Destroy = (project) => {
-        // console.log(project);
-
         if (!window.confirm("Are you sure, you want to delete this")) {
             return;
         }

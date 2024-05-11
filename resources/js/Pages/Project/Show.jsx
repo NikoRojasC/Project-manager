@@ -18,7 +18,6 @@ export default function Show({
     success,
 }) {
     const [show, setShow] = useState(true);
-    // console.log(tasks);
     queryParams = queryParams || {};
 
     useEffect(() => {
@@ -36,7 +35,6 @@ export default function Show({
         if (!window.confirm("Are you sure, you want to delete this")) return;
 
         if (task) {
-            // console.log(task);
             router.delete(route("tasks.destroy", task));
             return;
         }
