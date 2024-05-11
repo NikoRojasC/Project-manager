@@ -7,6 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    protected $fillable = [
+        'name',
+        'description',
+        'img_path',
+        'status',
+        'priority',
+        'due_date',
+        'assigned_user',
+        'created_by',
+        'updated_by',
+        'project_id'
+    ];
     use HasFactory;
     public function createdBy()
     {

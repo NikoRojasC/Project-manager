@@ -3,7 +3,11 @@ import TaskTable from "@/Components/TaskTable";
 import { PROJECT_STATUS_CLASS_MAP, PROJECT_STATUS_TEXT_MAP } from "@/Constants";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, router } from "@inertiajs/react";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
+import {
+    PencilSquareIcon,
+    PlusIcon,
+    TrashIcon,
+} from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 
 export default function Show({
@@ -124,6 +128,21 @@ export default function Show({
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
+                            <div className="flex justify-between ml-3 mr-7 mb-4">
+                                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                                    Tasks of "{project.name}"
+                                </h2>
+                                <PlusIcon
+                                    onClick={(e) =>
+                                        router.get(
+                                            route("tasks.create", [
+                                                [project.id],
+                                            ])
+                                        )
+                                    }
+                                    className="text-white bg-blue-500 hover:bg-blue-600 w-8 text-center p-2 rounded-lg cursor-pointer"
+                                />
+                            </div>
                             {success && show && (
                                 <div className="bg-emerald-500 py-2 px-4 text-white w-full rounded-lg mt-3 mx-2">
                                     {success}

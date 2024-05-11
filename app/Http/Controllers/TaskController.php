@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
+use App\Models\Project;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,9 +31,12 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $data = $request->query();
+        $project = Project::find($data[0]);
+        // dd($project);
+        return inertia('Task/Form', ['project' => new ProjectResource($project)]);
     }
 
     /**
@@ -36,7 +44,23 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        //
+        // dd($request);
+        $data = $request->validated();
+        $image = $data['image'] ?? null;
+        $data['assigned_user'] = Auth::id();
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+        // dd($data);
+
+        if ($image) {
+            $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
+        }
+
+        $name = $data['name'];
+        // Log::debug('niko: ');
+        Task::create($data);
+        return to_route('projects.show', [$data['project_id']])
+            ->with('success', "Task \"$name\" was created");
     }
 
     /**
@@ -50,10 +74,16 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task)
+    public function edit(Task $task, Request $request)
     {
-        return inertia('Task/Edit', [
-            'task' => new TaskResource($task)
+
+
+        $data = $request->query();
+        $project = Project::find($data[0]);
+        // dd($task);
+        return inertia('Task/Form', [
+            'task' => new TaskResource($task),
+            'project' => new ProjectResource($project)
         ]);
     }
 
@@ -62,7 +92,19 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        // Log::debug("niko: deberia actualizar");
+        $data = $request->validated();
+        $image = $data['image'] ?? null;
+        $data['updated_by'] = Auth::id();
+        if ($image) {
+            if ($task->img_path) {
+                Storage::disk('public')->deleteDirectory(dirname($task->img_path));
+            }
+            $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
+        }
+        $task->update($data);
+        return to_route('tasks.index')
+            ->with('success', "Task \"$task->name\" was updated");
     }
 
     /**

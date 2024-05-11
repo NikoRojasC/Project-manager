@@ -243,7 +243,10 @@ export default function TaskTable({
                                 <td className="px-3 py-2">
                                     <Link
                                         className="px-2"
-                                        href={route("tasks.edit", task.id)}
+                                        href={route("tasks.edit", [
+                                            [task.id],
+                                            [project_id],
+                                        ])}
                                     >
                                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded-full">
                                             <i className="fa-regular fa-pen-to-square text-white"></i>
@@ -252,7 +255,7 @@ export default function TaskTable({
 
                                     <button
                                         onClick={(e) => destroy(task)}
-                                        className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full px-2"
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full"
                                     >
                                         <i className="fa-solid fa-trash text-white"></i>
                                     </button>

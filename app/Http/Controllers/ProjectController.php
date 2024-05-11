@@ -58,7 +58,6 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         //
-        Log::debug('niko: debe crear');
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['created_by'] = Auth::id();
@@ -67,7 +66,9 @@ class ProjectController extends Controller
             $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         Project::create($data);
-        return to_route('projects.index');
+        $name = $data['name'];
+        return to_route('projects.index')
+            ->with('success', "Project \"$name\" was created");
     }
 
     /**
@@ -77,8 +78,8 @@ class ProjectController extends Controller
     {
 
         $query = $project->tasks();
-        $sortField = request("sort_field", 'id');
-        $sortDirection = request("sort_direction", "asc");
+        $sortField = request("sort_field", 'updated_at');
+        $sortDirection = request("sort_direction", "desc");
 
         if (request("name")) {
             $query->where("name", "like", "%" . request("name") . "%");
@@ -114,7 +115,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        Log::debug("niko: deberia actualizar");
+        // Log::debug("niko: deberia actualizar");
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();

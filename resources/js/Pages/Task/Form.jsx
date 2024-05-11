@@ -3,27 +3,31 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Form({ auth, project = null }) {
+export default function Form({ auth, task = null, project }) {
+    console.log(project);
+    // console.log(task.img_path);
     const [selectedImage, setSelectedImage] = useState(null);
     const { data, setData, post, errors } = useForm({
-        createdBy: project ? project.createdBy.name : "",
+        assignTo: task ? task.assignedUser.name : "",
         image: "",
-        image_path: project ? project.img_path : "",
-        name: project ? project.name : "",
-        status: project ? project.status : "",
-        description: project ? project.description : "",
-        due_date: project ? project.due_date : "",
-        _method: project ? "PUT" : "",
+        image_path: task ? task.img_path : "",
+        name: task ? task.name : "",
+        status: task ? task.status : "",
+        description: task ? task.description : "",
+        due_date: task ? task.due_date : "",
+        project_id: task ? task.project_id : project.id,
+        _method: task ? "PUT" : "",
     });
-    console.log(project.img_path);
+
+    console.log(data.project_id);
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if (project) {
-            post(route("projects.update", project));
+        if (task) {
+            post(route("tasks.update", task));
             return;
         }
-        post(route("projects.store"));
+        post(route("tasks.store"));
     };
 
     const changeImg = (e) => {
@@ -38,19 +42,18 @@ export default function Form({ auth, project = null }) {
         reader.readAsDataURL(file);
     };
     const cancel = () => {
-        router.get(route("projects.index"));
+        router.get(route("projects.show", project.id));
     };
-
     return (
         <Authenticated
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {project ? `Edit "${project.name}"` : "Create new Project"}
+                    {task ? `Edit "${task.name}"` : "Create new Task"}
                 </h2>
             }
         >
-            <Head title={project ? project.name : "Create new Project"} />
+            <Head title={task ? task.name : "Create new Task"} />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -63,6 +66,7 @@ export default function Form({ auth, project = null }) {
                                 selectedImage={selectedImage}
                                 cancel={cancel}
                                 errors={errors}
+                                isTask={true}
                             />
                         </div>
                     </div>

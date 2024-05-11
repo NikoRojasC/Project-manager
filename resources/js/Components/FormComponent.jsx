@@ -4,7 +4,7 @@ import SelectInput from "./SelectInput";
 import TextArea from "./TextArea";
 import TextInput from "./TextInput";
 
-export default function FormProject({
+export default function FormComponent({
     data,
     changeImg,
     setData,
@@ -12,6 +12,7 @@ export default function FormProject({
     cancel,
     onSubmit,
     errors,
+    isTask,
 }) {
     return (
         <form onSubmit={onSubmit} className="py-2 px-5">
@@ -40,19 +41,21 @@ export default function FormProject({
                 <div className=" py-2 px-5 w-2/3 mx-4 ">
                     <div className="flex">
                         <div className="w-1/2 ">
-                            {/* <div>
-                                <label htmlFor="createdBy">Created By:</label>
-                                <TextInput
-                                    className="mx-2"
-                                    name="createdBy"
-                                    id="createdBy"
-                                    value={data.createdBy}
-                                    onChange={(e) =>
-                                        setData("createdBy", e.target.value)
-                                    }
-                                />
-                            </div> */}
-                            <div>
+                            {isTask && (
+                                <div className="my-1">
+                                    <label htmlFor="assignTo">Assign To:</label>
+                                    <TextInput
+                                        className="mx-2"
+                                        name="assignTo"
+                                        id="assignTo"
+                                        value={data.assignTo}
+                                        onChange={(e) =>
+                                            setData("assignTo", e.target.value)
+                                        }
+                                    />
+                                </div>
+                            )}
+                            <div className="my-1">
                                 <label htmlFor="due_date">Due Date:</label>
                                 <TextInput
                                     id="due_date"
@@ -69,7 +72,7 @@ export default function FormProject({
                                     className="mt-2"
                                 />
                             </div>
-                            <div>
+                            <div className="my-1">
                                 <label htmlFor="status">Status:</label>
                                 <SelectInput
                                     id="status"
@@ -91,35 +94,24 @@ export default function FormProject({
                                     className="mt-2"
                                 />
                             </div>
-                            {/* <div>
-                                                    <label htmlFor="priority">
-                                                        Priority:
-                                                    </label>
-                                                    <SelectInput
-                                                        id="priority"
-                                                        className="mx-2"
-                                                        value={data.priority}
-                                                        onChange={(e) =>
-                                                            setData(
-                                                                "priority",
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                    >
-                                                        <option value="">
-                                                            Priority
-                                                        </option>
-                                                        <option value="low">
-                                                            Low
-                                                        </option>
-                                                        <option value="medium">
-                                                            Medium
-                                                        </option>
-                                                        <option value="high">
-                                                            High
-                                                        </option>
-                                                    </SelectInput>
-                                                </div> */}
+                            {isTask && (
+                                <div className="my-1">
+                                    <label htmlFor="priority">Priority:</label>
+                                    <SelectInput
+                                        id="priority"
+                                        className="mx-2"
+                                        value={data.priority}
+                                        onChange={(e) =>
+                                            setData("priority", e.target.value)
+                                        }
+                                    >
+                                        <option value="">Priority</option>
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                    </SelectInput>
+                                </div>
+                            )}
                         </div>
                         <div className="w-1/2 ">
                             <div>
