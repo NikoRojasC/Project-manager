@@ -19,8 +19,6 @@ export default function TaskTable({
 }) {
     queryParams = queryParams || {};
 
-    // console.log(queryParams);
-
     const searchFieldChanged = (name, value) => {
         if (value) {
             queryParams[name] = value;
@@ -38,7 +36,6 @@ export default function TaskTable({
     };
 
     const SortChange = (name) => {
-        console.log(queryParams);
         if (name === queryParams.sort_field) {
             if (queryParams.sort_dir === "asc") {
                 queryParams.sort_dir = "desc";

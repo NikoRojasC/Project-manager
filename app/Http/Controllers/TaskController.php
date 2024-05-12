@@ -87,12 +87,13 @@ class TaskController extends Controller
         ]);
     }
 
+
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // Log::debug("niko: deberia actualizar");
+        // Log::debug("niko: tasks update");
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();
@@ -103,7 +104,12 @@ class TaskController extends Controller
             $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $task->update($data);
-        return to_route('tasks.index')
+        // Log::debug('niko: ');
+        // Log::debug($task);
+
+        // dd($data);
+        // return inertia("Projects/Index");
+        return to_route('projects.show', $data['project_id'])
             ->with('success', "Task \"$task->name\" was updated");
     }
 
@@ -112,9 +118,6 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-
-
-        // Log::debug("niko: " . $task);
         $name = $task->name;
         if ($task->img_path) {
             Storage::disk('public')->deleteDirectory(dirname($task->img_path));

@@ -11,6 +11,7 @@ export default function Form({ auth, task = null, project }) {
         image_path: task ? task.img_path : "",
         name: task ? task.name : "",
         status: task ? task.status : "",
+        priority: task ? task.priority : "",
         description: task ? task.description : "",
         due_date: task ? task.due_date : "",
         project_id: task ? task.project_id : project.id,
@@ -20,7 +21,9 @@ export default function Form({ auth, task = null, project }) {
     const onSubmit = (e) => {
         e.preventDefault();
         if (task) {
+            // console.log(data);
             post(route("tasks.update", task));
+            // post(route("tasks.prueba", task));
             return;
         }
         post(route("tasks.store"));
@@ -45,7 +48,7 @@ export default function Form({ auth, task = null, project }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {task ? `Edit "${task.name}"` : "Create new Task"}
+                    {task ? `Edit "${data.name}"` : "Create new Task"}
                 </h2>
             }
         >

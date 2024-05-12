@@ -12,11 +12,13 @@ Route::redirect('/', '/dashboard');
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
     Route::resource('/projects', ProjectController::class);
+    // Route::put('/tasks/prueba/{task}', [TaskController::class, 'prueba'])->name('tasks.prueba');
     Route::resource('/users', UserController::class);
     Route::resource('/tasks', TaskController::class);
 });
