@@ -13,7 +13,9 @@ export default function FormComponent({
     onSubmit,
     errors,
     isTask,
+    users = null,
 }) {
+    // console.log(onSubmit);
     return (
         <form onSubmit={onSubmit} className="py-2 px-5">
             <div className="flex justify-around">
@@ -43,16 +45,27 @@ export default function FormComponent({
                         <div className="w-1/2 ">
                             {isTask && (
                                 <div className="my-1">
-                                    <label htmlFor="assignTo">Assign To:</label>
-                                    <TextInput
+                                    <label htmlFor="assign_user">
+                                        Assign To:
+                                    </label>
+                                    <SelectInput
+                                        id="assign_user"
                                         className="mx-2"
-                                        name="assignTo"
-                                        id="assignTo"
-                                        value={data.assignTo}
+                                        value={data.assign_user}
                                         onChange={(e) =>
-                                            setData("assignTo", e.target.value)
+                                            setData(
+                                                "assign_user",
+                                                e.target.value
+                                            )
                                         }
-                                    />
+                                    >
+                                        <option value="">Select user</option>
+                                        {users.map((u) => (
+                                            <option key={u.id} value={u.id}>
+                                                {u.name}
+                                            </option>
+                                        ))}
+                                    </SelectInput>
                                 </div>
                             )}
                             <div className="my-1">

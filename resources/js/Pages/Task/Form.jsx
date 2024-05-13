@@ -3,10 +3,10 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Head, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function Form({ auth, task = null, project }) {
+export default function Form({ auth, task = null, project, users }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const { data, setData, post, errors } = useForm({
-        assignTo: task ? task.assignedUser.name : "",
+        assign_user: task ? task.assignedUser.id : "",
         image: "",
         image_path: task ? task.img_path : "",
         name: task ? task.name : "",
@@ -18,6 +18,7 @@ export default function Form({ auth, task = null, project }) {
         _method: task ? "PUT" : "",
     });
 
+    // console.log(users.data[0].name);
     const onSubmit = (e) => {
         e.preventDefault();
         if (task) {
@@ -66,6 +67,7 @@ export default function Form({ auth, task = null, project }) {
                                 cancel={cancel}
                                 errors={errors}
                                 isTask={true}
+                                users={users.data}
                             />
                         </div>
                     </div>

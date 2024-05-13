@@ -47,13 +47,13 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    // /**
-    //  * Get all of the Projects for the User
-    //  *
-    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
-    //  */
-    // public function Projects()
-    // {
-    //     return $this->hasMany(Project::class);
-    // }
+    /**
+     * Get all of the Projects for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class)->withPivot('role_id');
+    }
 }

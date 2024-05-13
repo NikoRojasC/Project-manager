@@ -277,7 +277,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                                                 <td className="px-3 py-2">
                                                     {project.id}
                                                 </td>
-                                                <td className="px-3 py-2 text-wrap  truncate ">
+                                                <td className="px-3 py-2">
                                                     <Link
                                                         href={route(
                                                             "projects.show",
@@ -307,7 +307,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                                                 <td className="px-3 py-2">
                                                     {project.due_date}
                                                 </td>
-                                                <td className="px-3 py-2">
+                                                <td className="px-3  pt-1 my-2 line-clamp-1 hover:line-clamp-none ">
                                                     {project.createdBy.name}
                                                 </td>
                                                 <td className="px-3 py-2">

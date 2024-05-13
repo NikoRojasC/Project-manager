@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Project;
+use App\Models\ProjectUser;
+use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,18 +16,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Crear roles predefinidos
+        Role::create(['name' => 'Admin']);
+        Role::create(['name' => 'Edit']);
+        Role::create(['name' => 'User']);
 
-        User::factory()->create([
-            'name' => 'niko',
-            'email' => 'niko@example.com',
-            'password' => bcrypt('abcd123!'),
-            'email_verified_at' => time()
-        ]);
-
-        Project::factory()
-            ->count(30)
-            ->hasTasks(20)
-            ->create();
+        ProjectUser::factory()->count(10)->create();
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
+use App\Http\Resources\UserResource;
 use App\Models\Project;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -35,8 +36,10 @@ class TaskController extends Controller
     {
         $data = $request->query();
         $project = Project::find($data[0]);
-        // dd($project);
-        return inertia('Task/Form', ['project' => new ProjectResource($project)]);
+        $users = $project->users()->get();
+
+        // dd($users);
+        return inertia('Task/Form', ['project' => new ProjectResource($project), 'users' => UserResource::collection($users)]);
     }
 
     /**
@@ -81,9 +84,12 @@ class TaskController extends Controller
         $data = $request->query();
         $project = Project::find($data[0]);
         // dd($task);
+        $users = $project->users()->get();
+
         return inertia('Task/Form', [
             'task' => new TaskResource($task),
-            'project' => new ProjectResource($project)
+            'project' => new ProjectResource($project),
+            'users' => UserResource::collection($users)
         ]);
     }
 

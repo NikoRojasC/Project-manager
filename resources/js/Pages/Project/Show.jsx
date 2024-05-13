@@ -105,7 +105,7 @@ export default function Show({
                                             value={project.due_date}
                                         />
                                         <TextProject
-                                            name="Last Updated By"
+                                            name="Updated By"
                                             value={project.updatedBy.name}
                                         />
                                     </div>

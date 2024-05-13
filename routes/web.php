@@ -18,6 +18,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('/projects', ProjectController::class);
+    Route::get('projects/{project}/edit/users', [ProjectController::class, 'users'])->name('projects.edit.users');
+    Route::post('projects/{project}/edit/users', [ProjectController::class, 'addUsers'])->name('projects.edit.addUsers');
+
     // Route::put('/tasks/prueba/{task}', [TaskController::class, 'prueba'])->name('tasks.prueba');
     Route::resource('/users', UserController::class);
     Route::resource('/tasks', TaskController::class);

@@ -6,9 +6,16 @@ use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectUserResource;
+use App\Http\Resources\RoleResource;
 use App\Http\Resources\TaskResource;
+use App\Http\Resources\UserResource;
+use App\Models\ProjectUser;
+use App\Models\Role;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -21,9 +28,12 @@ class ProjectController extends Controller
      */
     public function index()
     {
+
+        $user = auth()->user();
         $query = Project::query();
         $sortField = request("sort_field", 'updated_at');
         $sortDirection = request("sort_dir", "desc");
+        // $query->where('user')
         if (request('name')) {
             $query->where('name', 'like', "%" . request('name') . '%');
         }
@@ -31,6 +41,10 @@ class ProjectController extends Controller
         if (request('status')) {
             $query->where('status', request('status'));
         }
+        $query->whereHas('users', function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+                ->where('role_id', '!=', null); // Considerar solo proyectos en los que el usuario tenga un rol asignado
+        });
 
         $projects = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
 
@@ -65,7 +79,12 @@ class ProjectController extends Controller
         if ($image) {
             $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
-        Project::create($data);
+        $project = Project::create($data);
+        $ProUser = new ProjectUser();
+        $ProUser->user_id = auth()->id();
+        $ProUser->project_id = $project->id;
+        $ProUser->role_id = 1;
+        $ProUser->save();
         $name = $data['name'];
         return to_route('projects.index')
             ->with('success', "Project \"$name\" was created");
@@ -145,8 +164,36 @@ class ProjectController extends Controller
         if ($project->img_path) {
             Storage::disk('public')->deleteDirectory(dirname($project->img_path));
         }
+        $project->users()->detach();
         $project->delete();
 
         return to_route('projects.index')->with('success', "Project \"$name\" was deleted.");
+    }
+
+    public function users(Project $project)
+    {
+        Log::debug('niko: projects users');
+        $users = $project->users()->get();
+        // dd($users);
+        $roles = Role::get();
+        return inertia('Project/FormUsers', [
+            'project' => new ProjectResource($project),
+            'users' => ProjectUserResource::collection($users),
+            'roles' => RoleResource::collection($roles)
+        ]);
+    }
+
+    public function addUsers(Project $project, Request $request)
+    {
+        $user = User::where('email', 'like', $request->email)->first();
+
+        $projectUser = new ProjectUser([
+            'user_id' => $user->id,
+            'project_id' => $project->id,
+            'role_id' => 2
+        ]);
+        $projectUser->save();
+
+        return to_route('projects.edit.users', ['project' => $project]);
     }
 }
