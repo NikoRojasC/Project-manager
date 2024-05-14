@@ -16,6 +16,8 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
     const [show, setShow] = useState(true);
 
+    localStorage.removeItem("prevLocation");
+
     useEffect(() => {
         setShow(true);
 
@@ -65,6 +67,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
     };
 
     const Edit = (project) => {
+        localStorage.setItem("prevLocation", "index");
         router.get(route("projects.edit", project));
     };
     const create = () => {

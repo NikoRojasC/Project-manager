@@ -20,6 +20,7 @@ export default function Show({
     const [show, setShow] = useState(true);
     queryParams = queryParams || {};
 
+    localStorage.removeItem("prevLocation");
     useEffect(() => {
         setShow(true);
 
@@ -41,6 +42,10 @@ export default function Show({
 
         router.delete(route("projects.destroy", project));
     };
+    const edit = () => {
+        localStorage.setItem("prevLocation", "show");
+        router.get(route("projects.edit", project.id));
+    };
     return (
         <Authenticated
             user={auth.user}
@@ -51,9 +56,7 @@ export default function Show({
                     </h2>
                     <div className="flex  justify-between w-20">
                         <PencilSquareIcon
-                            onClick={(e) =>
-                                router.get(route("projects.edit", project.id))
-                            }
+                            onClick={(e) => edit()}
                             className="text-white bg-blue-500 px-2 py-1 w-9 rounded-lg cursor-pointer hover:bg-blue-600"
                         />
                         <TrashIcon

@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/projects', ProjectController::class);
     Route::get('projects/{project}/edit/users', [ProjectController::class, 'users'])->name('projects.edit.users');
     Route::post('projects/{project}/edit/users', [ProjectController::class, 'addUsers'])->name('projects.edit.addUsers');
+    Route::put('projects/{project}/edit/users', [ProjectController::class, 'modUsers'])->name('projects.edit.modUsers');
 
     // Route::put('/tasks/prueba/{task}', [TaskController::class, 'prueba'])->name('tasks.prueba');
     Route::resource('/users', UserController::class);

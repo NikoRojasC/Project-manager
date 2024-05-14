@@ -29,8 +29,8 @@ class UpdateTaskRequest extends FormRequest
             'due_date' => ['nullable', 'date'],
             'status' => ['required', Rule::in(['pending', 'in_progress', 'completed'])],
             'priority' => ['required', Rule::in(['low', 'medium', 'high'])],
-            'project_id' => [''],
-            'assign_user' => ['required']
+            'project_id' => ['numeric'],
+            'assigned_user' => ['required']
 
         ];
     }

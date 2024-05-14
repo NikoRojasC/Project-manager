@@ -14,6 +14,7 @@ export default function Form({ auth, project = null }) {
         status: project ? project.status : "",
         description: project ? project.description : "",
         due_date: project ? project.due_date : "",
+        prevLoc: localStorage.getItem("prevLocation"),
         _method: project ? "PUT" : "",
     });
 

@@ -23,7 +23,6 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::paginate(10);
-        // dd($tasks);
         return inertia("Task/Index", [
             'tasks' => TaskResource::collection($tasks)
         ]);
@@ -38,7 +37,6 @@ class TaskController extends Controller
         $project = Project::find($data[0]);
         $users = $project->users()->get();
 
-        // dd($users);
         return inertia('Task/Form', ['project' => new ProjectResource($project), 'users' => UserResource::collection($users)]);
     }
 
@@ -47,20 +45,16 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        // dd($request);
         $data = $request->validated();
         $image = $data['image'] ?? null;
-        $data['assigned_user'] = Auth::id();
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
-        // dd($data);
 
         if ($image) {
             $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
 
         $name = $data['name'];
-        // Log::debug('niko: ');
         Task::create($data);
         return to_route('projects.show', [$data['project_id']])
             ->with('success', "Task \"$name\" was created");
@@ -83,7 +77,6 @@ class TaskController extends Controller
 
         $data = $request->query();
         $project = Project::find($data[0]);
-        // dd($task);
         $users = $project->users()->get();
 
         return inertia('Task/Form', [
@@ -99,7 +92,6 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // Log::debug("niko: tasks update");
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();
@@ -110,11 +102,7 @@ class TaskController extends Controller
             $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $task->update($data);
-        // Log::debug('niko: ');
-        // Log::debug($task);
 
-        // dd($data);
-        // return inertia("Projects/Index");
         return to_route('projects.show', $data['project_id'])
             ->with('success', "Task \"$task->name\" was updated");
     }

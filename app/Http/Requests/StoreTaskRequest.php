@@ -30,7 +30,7 @@ class StoreTaskRequest extends FormRequest
             'status' => ['required', Rule::in(['pending', 'in_progress', 'completed'])],
             'priority' => ['required', Rule::in(['low', 'medium', 'high'])],
             'project_id' => [''],
-            'assign_user' => ['required']
+            'assigned_user' => ['required']
 
         ];
     }

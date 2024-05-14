@@ -1,14 +1,19 @@
 import FormNav from "@/Components/FormNav";
+import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
+import UserRole from "@/Components/UserRole";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PlusCircleIcon } from "@heroicons/react/16/solid";
 import { Head, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
 
-export default function FormUsers({ auth, project = null, users, roles }) {
-    // console.log(users);
-    console.log(roles.data);
-
+export default function FormUsers({
+    auth,
+    project = null,
+    users,
+    roles,
+    success,
+}) {
     const { data, setData, post, errors } = useForm({
         email: "",
     });
@@ -19,7 +24,6 @@ export default function FormUsers({ auth, project = null, users, roles }) {
     };
 
     const toUser = () => {
-        console.log(showUser);
         setShowUser(!showUser);
     };
 
@@ -69,12 +73,12 @@ export default function FormUsers({ auth, project = null, users, roles }) {
                             )}
 
                             {users.data.map((u) => (
-                                <p key={u.id}>
-                                    {u.name} -{" "}
-                                    {roles.data.map(
-                                        (r) => r.id === u.role && r.name
-                                    )}
-                                </p>
+                                <UserRole
+                                    key={u.id}
+                                    user={u}
+                                    roles={roles}
+                                    project={project}
+                                />
                             ))}
                         </div>
                     </div>

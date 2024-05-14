@@ -15,7 +15,6 @@ export default function FormComponent({
     isTask,
     users = null,
 }) {
-    // console.log(onSubmit);
     return (
         <form onSubmit={onSubmit} className="py-2 px-5">
             <div className="flex justify-around">
@@ -45,16 +44,16 @@ export default function FormComponent({
                         <div className="w-1/2 ">
                             {isTask && (
                                 <div className="my-1">
-                                    <label htmlFor="assign_user">
+                                    <label htmlFor="assigned_user">
                                         Assign To:
                                     </label>
                                     <SelectInput
-                                        id="assign_user"
+                                        id="assigned_user"
                                         className="mx-2"
-                                        value={data.assign_user}
+                                        value={data.assigned_user}
                                         onChange={(e) =>
                                             setData(
-                                                "assign_user",
+                                                "assigned_user",
                                                 e.target.value
                                             )
                                         }

@@ -135,6 +135,7 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request, Project $project)
     {
         // Log::debug("niko: deberia actualizar");
+        $route = $request->prevLoc;
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();
@@ -145,6 +146,12 @@ class ProjectController extends Controller
             $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $project->update($data);
+        // dd($route);
+        if ($route === 'show') {
+
+            return to_route('projects.show', $project)
+                ->with('success', "Project \"$project->name\" was updated");
+        }
         return to_route('projects.index')
             ->with('success', "Project \"$project->name\" was updated");
     }
@@ -185,6 +192,9 @@ class ProjectController extends Controller
 
     public function addUsers(Project $project, Request $request)
     {
+        $request->validate([
+            'email' => 'email',
+        ]);
         $user = User::where('email', 'like', $request->email)->first();
 
         $projectUser = new ProjectUser([
@@ -195,5 +205,23 @@ class ProjectController extends Controller
         $projectUser->save();
 
         return to_route('projects.edit.users', ['project' => $project]);
+    }
+
+    public function modUsers(Project $project, Request $request)
+    {
+        $request->validate([
+            'user' => 'numeric|max_digits:10',
+            'rol' => 'numeric|max_digits:10',
+
+        ]);
+        $projectUser = ProjectUser::where('user_id', $request->user)->where('project_id', $project->id)->first();
+        $projectUser->role_id = $request->rol;
+        $projectUser->save();
+        $success = [
+            $request->user,
+            'Saved'
+        ];
+
+        return to_route('projects.edit.users', ['project' => $project])->with('success', $success);
     }
 }

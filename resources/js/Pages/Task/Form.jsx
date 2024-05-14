@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function Form({ auth, task = null, project, users }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const { data, setData, post, errors } = useForm({
-        assign_user: task ? task.assignedUser.id : "",
+        assigned_user: task ? task.assignedUser.id : "",
         image: "",
         image_path: task ? task.img_path : "",
         name: task ? task.name : "",
@@ -18,13 +18,10 @@ export default function Form({ auth, task = null, project, users }) {
         _method: task ? "PUT" : "",
     });
 
-    // console.log(users.data[0].name);
     const onSubmit = (e) => {
         e.preventDefault();
         if (task) {
-            // console.log(data);
             post(route("tasks.update", task));
-            // post(route("tasks.prueba", task));
             return;
         }
         post(route("tasks.store"));

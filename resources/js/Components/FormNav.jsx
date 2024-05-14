@@ -2,7 +2,6 @@ import { UserPlusIcon } from "@heroicons/react/16/solid";
 import { Link } from "@inertiajs/react";
 
 export default function FormNav({ project, toUser }) {
-    // console.log(toUser);
     return (
         <>
             <div className="flex justify-between text-white mx-3 shadow-[0_10px_5px_-6px_rgba(15,23,42,0.62)]">
