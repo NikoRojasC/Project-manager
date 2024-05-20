@@ -15,7 +15,7 @@ export default function UserRole({ user, roles, project }) {
 
     const rolChange = (e) => {
         setData("rol", e.target.value);
-        post(route("projects.edit.modUsers", project));
+        // post(route("projects.edit.modUsers", project));
     };
     return (
         <form className="mt-1">

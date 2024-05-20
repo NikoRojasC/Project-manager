@@ -149,6 +149,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
+
         $route = $request->prevLoc;
         $data = $request->validated();
         $image = $data['image'] ?? null;
@@ -160,6 +161,9 @@ class ProjectController extends Controller
             $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $project->update($data);
+        Log::debug('niko ----->');
+        Log::debug($data);
+        Log::debug('<----- niko');
 
         if ($route === 'show') {
 

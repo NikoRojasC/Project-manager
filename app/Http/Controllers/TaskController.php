@@ -92,6 +92,7 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
+
         $data = $request->validated();
         $image = $data['image'] ?? null;
         $data['updated_by'] = Auth::id();
@@ -102,8 +103,9 @@ class TaskController extends Controller
             $data['img_path'] = $image->store('tasks/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $task->update($data);
+        // dd($data);
 
-        return to_route('projects.show', $data['project_id'])
+        return to_route('projects.show', $task->project_id)
             ->with('success', "Task \"$task->name\" was updated");
     }
 

@@ -14,6 +14,7 @@ import {
     TrashIcon,
 } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
+import TableTextSelect from "@/Components/TableTextSelect";
 
 export default function Index({
     auth,
@@ -84,6 +85,7 @@ export default function Index({
         router.get(route("projects.edit", project));
     };
     const create = () => {
+        // alert("hola");
         router.get(route("projects.create"));
     };
 
@@ -305,20 +307,10 @@ export default function Index({
                                                     </Link>
                                                 </td>
                                                 <td className={"px-3 py-2 "}>
-                                                    <span
-                                                        className={
-                                                            "py-1 px-2 rounded-lg " +
-                                                            PROJECT_STATUS_CLASS_MAP[
-                                                                project.status
-                                                            ]
-                                                        }
-                                                    >
-                                                        {
-                                                            PROJECT_STATUS_TEXT_MAP[
-                                                                project.status
-                                                            ]
-                                                        }
-                                                    </span>
+                                                    <TableTextSelect
+                                                        project={project}
+                                                        campo="status"
+                                                    ></TableTextSelect>
                                                 </td>
                                                 <td className="px-3 py-2">
                                                     {project.due_date}

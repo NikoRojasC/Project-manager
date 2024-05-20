@@ -9,6 +9,7 @@ import TableHead from "./TableHead";
 import TextInput from "./TextInput";
 import { Link, router } from "@inertiajs/react";
 import Pagination from "./Pagination";
+import TableTextSelect from "./TableTextSelect";
 
 export default function TaskTable({
     tasks,
@@ -219,26 +220,16 @@ export default function TaskTable({
                                     <p className="line-clamp-1">{task.name}</p>
                                 </td>
                                 <td className={"px-3 py-2 "}>
-                                    <span
-                                        className={
-                                            "py-1 px-2 rounded-lg " +
-                                            TASK_STATUS_CLASS_MAP[task.status]
-                                        }
-                                    >
-                                        {TASK_STATUS_TEXT_MAP[task.status]}
-                                    </span>
+                                    <TableTextSelect
+                                        campo="status"
+                                        task={task}
+                                    />
                                 </td>
                                 <td className={"px-3 py-2 "}>
-                                    <span
-                                        className={
-                                            "py-1 px-2 rounded-lg " +
-                                            TASK_PRIORITY_CLASS_MAP[
-                                                task.priority
-                                            ]
-                                        }
-                                    >
-                                        {TASK_PRIORITY_TEXT_MAP[task.priority]}
-                                    </span>
+                                    <TableTextSelect
+                                        campo="priority"
+                                        task={task}
+                                    />
                                 </td>
                                 <td className="px-3 py-2">{task.due_date}</td>
                                 <td className="px-3 py-2">
