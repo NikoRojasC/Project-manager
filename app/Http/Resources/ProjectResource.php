@@ -27,6 +27,7 @@ class ProjectResource extends JsonResource
             'img_path' => $this->img_path ? Storage::url($this->img_path) : '',
             'createdBy' => new UserResource($this->createdBy),
             'updatedBy' => new UserResource($this->updatedBy),
+            'role' => $this->getOriginal('pivot_role_id') ? $this->getOriginal('pivot_role_id') : $this->role,
         ];
     }
 }

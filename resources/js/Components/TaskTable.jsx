@@ -26,7 +26,12 @@ export default function TaskTable({
             delete queryParams[name];
         }
 
-        router.get(route("projects.index", queryParams));
+        router.get(
+            route(
+                uri ? uri : "tasks.index",
+                project_id ? [project_id, queryParams] : queryParams
+            )
+        );
     };
 
     const onKeyPress = (name, e) => {
@@ -46,10 +51,13 @@ export default function TaskTable({
             queryParams.sort_field = name;
             queryParams.sort_dir = "asc";
         }
+        console.log(queryParams);
         router.get(
             route(
-                uri ? uri : "tasks.index",
-                project_id ? [project_id, queryParams] : queryParams
+                uri,
+                [project_id, queryParams]
+                // uri ? uri : "tasks.index",
+                // project_id ? [project_id, queryParams] : queryParams
             )
         );
     };
@@ -240,10 +248,7 @@ export default function TaskTable({
                                 <td className="px-3 py-2">
                                     <Link
                                         className="px-2"
-                                        href={route("tasks.edit", [
-                                            [task.id],
-                                            [project_id],
-                                        ])}
+                                        href={route("tasks.edit", task)}
                                     >
                                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded-full">
                                             <i className="fa-regular fa-pen-to-square text-white"></i>

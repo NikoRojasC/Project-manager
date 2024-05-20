@@ -75,8 +75,8 @@ class TaskController extends Controller
     {
 
 
-        $data = $request->query();
-        $project = Project::find($data[0]);
+        // $data = $request->query();
+        $project = Project::find($task->project_id);
         $users = $project->users()->get();
 
         return inertia('Task/Form', [

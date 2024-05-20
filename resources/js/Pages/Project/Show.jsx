@@ -17,6 +17,7 @@ export default function Show({
     queryParams = null,
     success,
 }) {
+    console.log(project);
     const [show, setShow] = useState(true);
     queryParams = queryParams || {};
 
@@ -61,13 +62,18 @@ export default function Show({
                         />
                         <TrashIcon
                             onClick={(e) => destroy()}
-                            className="text-white bg-red-600 px-2 py-1 w-9 rounded-lg cursor-pointer hover:bg-red-700"
+                            className={
+                                "text-white bg-red-600 px-2 py-1 w-9 rounded-lg cursor-pointer hover:bg-red-700 " +
+                                (project.role !== 1 ? "hidden" : "")
+                            }
                         />
                     </div>
                 </div>
             }
         >
             <Head title={"Projects " + project.name} />
+
+            {/* <pre>{auth.user}</pre> */}
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

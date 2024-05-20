@@ -8,10 +8,21 @@ import {
 import TextInput from "@/Components/TextInput";
 import SelectInput from "@/Components/SelectInput";
 import TableHead from "@/Components/TableHead";
-import { PlusIcon } from "@heroicons/react/16/solid";
+import {
+    PencilSquareIcon,
+    PlusIcon,
+    TrashIcon,
+} from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 
-export default function Index({ auth, projects, queryParams = null, success }) {
+export default function Index({
+    auth,
+    projects,
+    queryParams = null,
+    success,
+    user,
+}) {
+    console.log(projects);
     queryParams = queryParams || {};
 
     const [show, setShow] = useState(true);
@@ -59,6 +70,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
     };
 
     const Destroy = (project) => {
+        if (project.role !== 1) return;
         if (!window.confirm("Are you sure, you want to delete this")) {
             return;
         }
@@ -67,6 +79,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
     };
 
     const Edit = (project) => {
+        if (project.role === 3) return;
         localStorage.setItem("prevLocation", "index");
         router.get(route("projects.edit", project));
     };
@@ -186,7 +199,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                                                         ? queryParams.sort_field
                                                         : ""
                                                 }
-                                                name="createdBy"
+                                                name="created_by"
                                                 classStyle="px-3 py-2 text-start !w-[132px]"
                                             >
                                                 Created By
@@ -318,23 +331,31 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                                                 </td>
                                                 <td className="px-3 py-2 ">
                                                     <div className="flex justify-around">
-                                                        <button
+                                                        <PencilSquareIcon
                                                             onClick={(e) =>
                                                                 Edit(project)
                                                             }
-                                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded-full"
-                                                        >
-                                                            <i className="fa-regular fa-pen-to-square text-white"></i>
-                                                        </button>
+                                                            className={`text-white font-bold px-2 py-2 rounded-full w-8  +
+                                                                ${
+                                                                    project.role ===
+                                                                    3
+                                                                        ? "bg-gray-400 "
+                                                                        : "bg-blue-500 hover:bg-blue-700"
+                                                                }
+                                                                    `}
+                                                        ></PencilSquareIcon>
 
-                                                        <button
+                                                        <TrashIcon
                                                             onClick={(e) =>
                                                                 Destroy(project)
                                                             }
-                                                            className="bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded-full"
-                                                        >
-                                                            <i className="fa-solid fa-trash text-white"></i>
-                                                        </button>
+                                                            className={`text-white font-bold px-2 py-2 rounded-full w-8 ${
+                                                                project.role ===
+                                                                1
+                                                                    ? "bg-red-500 hover:bg-red-700"
+                                                                    : "bg-gray-400 "
+                                                            }`}
+                                                        ></TrashIcon>
                                                     </div>
                                                 </td>
                                             </tr>

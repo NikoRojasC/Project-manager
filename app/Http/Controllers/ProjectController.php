@@ -6,7 +6,6 @@ use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
-use App\Http\Resources\ProjectUserResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\UserResource;
@@ -41,14 +40,18 @@ class ProjectController extends Controller
         if (request('status')) {
             $query->where('status', request('status'));
         }
-        $query->whereHas('users', function ($q) use ($user) {
-            $q->where('user_id', $user->id)
-                ->where('role_id', '!=', null); // Considerar solo proyectos en los que el usuario tenga un rol asignado
-        });
+        // $query->whereHas('users', function ($q) use ($user) {
+        //     $q->where('user_id', $user->id)
+        //         ->where('role_id', '!=', null); // Considerar solo proyectos en los que el usuario tenga un rol asignado
+        // });
 
-        $projects = $query->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
+        $projects = $user->projects();
 
 
+        $projects = $projects->orderBy($sortField, $sortDirection)->paginate(15)->withQueryString();
+
+
+        // dd($projects);
 
 
         return inertia('Project/Index', [
@@ -96,10 +99,12 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
 
+
         $query = $project->tasks();
         $sortField = request("sort_field", 'updated_at');
         $sortDirection = request("sort_direction", "desc");
 
+        // dd($sortField, $sortDirection);
         if (request("name")) {
             $query->where("name", "like", "%" . request("name") . "%");
         }
@@ -110,6 +115,12 @@ class ProjectController extends Controller
         $tasks = $query->orderBy($sortField, $sortDirection)
             ->paginate(10)
             ->withQueryString();
+
+        // dd($project);
+
+        $project->role = Auth::user()->projects()->where('project_id', $project->id)->first()->getOriginal('pivot_role_id');
+
+
 
         return inertia('Project/Show', [
             'project' => new ProjectResource($project),
@@ -124,6 +135,10 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        $project->role = Auth::user()->projects()->where('project_id', $project->id)->first()->getOriginal('pivot_role_id');
+        if ($project->role === 3) {
+            return to_route('projects.show', $project);
+        }
         return inertia('Project/Form', [
             'project' => new ProjectResource($project),
         ]);
@@ -134,7 +149,6 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        // Log::debug("niko: deberia actualizar");
         $route = $request->prevLoc;
         $data = $request->validated();
         $image = $data['image'] ?? null;
@@ -146,7 +160,7 @@ class ProjectController extends Controller
             $data['img_path'] = $image->store('projects/' . $data['name'] . Carbon::now()->timestamp, 'public');
         }
         $project->update($data);
-        // dd($route);
+
         if ($route === 'show') {
 
             return to_route('projects.show', $project)
@@ -179,13 +193,15 @@ class ProjectController extends Controller
 
     public function users(Project $project)
     {
-        Log::debug('niko: projects users');
+        $project->role = Auth::user()->projects()->where('project_id', $project->id)->first()->getOriginal('pivot_role_id');
+        if ($project->role !== 1) {
+            return to_route('projects.edit', $project);
+        }
         $users = $project->users()->get();
-        // dd($users);
         $roles = Role::get();
         return inertia('Project/FormUsers', [
             'project' => new ProjectResource($project),
-            'users' => ProjectUserResource::collection($users),
+            'users' => UserResource::collection($users),
             'roles' => RoleResource::collection($roles)
         ]);
     }
